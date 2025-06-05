@@ -1,14 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { supabase } from "@/lib/supabase/supabase";
+import { supabase } from "@/lib/supabase/client";
 import { useAppDispatch } from "@/flux/hook";
 import { setUser } from "@/flux/user/slice";
+import { useRouter } from "next/navigation";
 
 export default function Register() {
   const dispatch = useAppDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const router = useRouter();
 
   const handleRegister = async () => {
     const { error } = await supabase.auth.signUp({ email, password });
