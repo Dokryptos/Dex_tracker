@@ -3,6 +3,7 @@ import { UserState } from "./types";
 
 const initialState: UserState = {
   email: null,
+  username: null,
   isLoggedIn: false,
 };
 
@@ -12,10 +13,12 @@ const userSlice = createSlice({
   reducers: {
     setUser(state, action: PayloadAction<string>) {
       state.email = action.payload;
+      state.username = action.payload;
       state.isLoggedIn = true;
     },
     clearUser(state) {
       state.email = null;
+      state.username = null;
       state.isLoggedIn = false;
     },
   },
