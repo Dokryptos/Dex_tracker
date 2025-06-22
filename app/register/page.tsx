@@ -33,6 +33,7 @@ export default function Register() {
 
   return (
     <div className="p-8 flex flex-col items-center justify-center mt-20 border-2 border-gray-200 rounded-lg shadow-md max-w-md mx-auto">
+      <h1 className="text-2xl font-bold mb-4">Register</h1>
       <div className="w-full mb-2">
         <h2>User :</h2>
         <input
@@ -54,7 +55,7 @@ export default function Register() {
         />
       </div>
       <div className="w-full mb-2">
-        <h2>Mot de passe :</h2>
+        <h2>Password :</h2>
         <input
           className="w-full border p-2 mb-4 rounded"
           placeholder="Mot de passe"
