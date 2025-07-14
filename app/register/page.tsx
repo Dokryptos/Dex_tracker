@@ -11,6 +11,7 @@ export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
+  const [confirmation, setConfirmation] = useState<boolean>(false);
   const router = useRouter();
 
   const handleRegister = async () => {
@@ -26,6 +27,8 @@ export default function Register() {
       }
     } else {
       dispatch(setUser(email));
+      setConfirmation(true);
+      // Enregistrer le nom d'utilisateur dans la base de données
       alert("Compte créé, vérifie ton email !");
       router.push("/login");
     }
@@ -63,6 +66,13 @@ export default function Register() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
+      </div>
+      <div>
+        {confirmation ? (
+          <p className="text-green-600 mb-4">
+            Un email de confirmation a été envoyé. Veuillez vérifier votre boîte de réception.
+          </p>
+            ) : null }
       </div>
       <button
         onClick={handleRegister}
