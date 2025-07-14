@@ -27,11 +27,17 @@ export default function Register() {
       }
     } else {
   const userId = signUpData.user?.id;
-  await supabase.from("profiles").insert({
-    id: userId,
-    email,
-    username,
-  });
+  
+  const { error: insertError } = await supabase
+      .from("profiles")
+      .insert([{ id: userId, email, username }]);
+
+    if (insertError) {
+      console.error("Erreur d'insertion dans la table 'profiles':", insertError);
+      alert("Inscription réussie, mais une erreur est survenue lors de l’enregistrement du profil.");
+      return;
+    };
+
 
   dispatch(setUser({id: userId, email, username}));
   setConfirmation(true);

@@ -12,13 +12,13 @@ const profilesSlice = createSlice({
   name: "profiles",
   initialState,
   reducers: {
-setUser: (state, action: PayloadAction<{ id: string; email: string; username: string }>) => {
-  const { id, email, username } = action.payload;
-  state.id = id;
-  state.email = email;
-  state.username = username;
-  state.isLoggedIn = true;
-},
+    setUser: (state, action) => {
+      const { id, email, username } = action.payload;
+      state.id = id;
+      state.email = email;
+      state.username = username;
+      state.isLoggedIn = true;
+    },
     clearUser(state) {
       state.email = null;
       state.id = null; 
