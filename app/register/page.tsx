@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { supabase } from "@/lib/supabase/client";
 import { useAppDispatch } from "@/flux/hook";
-import { setUser } from "@/flux/user/slice";
+import { setUser } from "@/flux/profiles/slice";
 import { useRouter } from "next/navigation";
 
 export default function Register() {
@@ -15,7 +15,7 @@ export default function Register() {
   const router = useRouter();
 
   const handleRegister = async () => {
-    const { error } = await supabase.auth.signUp({ email, password });
+  const { data: signUpData, error } = await supabase.auth.signUp({ email, password });
     if (error) {
       if (
         error.message.includes("already registered") ||
@@ -26,12 +26,17 @@ export default function Register() {
         alert(error.message);
       }
     } else {
-      dispatch(setUser(email));
-      setConfirmation(true);
-      // Enregistrer le nom d'utilisateur dans la base de données
-      alert("Compte créé, vérifie ton email !");
-      router.push("/login");
-    }
+  const userId = signUpData.user?.id;
+  await supabase.from("profiles").insert({
+    id: userId,
+    email,
+    username,
+  });
+
+  dispatch(setUser({id: userId, email, username}));
+  setConfirmation(true);
+  router.push("/login");
+}
   };
 
   return (
