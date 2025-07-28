@@ -11,53 +11,44 @@ export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
-  const [confirmation, setConfirmation] = useState<boolean>(false);
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [confirmation, setConfirmation] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const router = useRouter();
 
   const handleRegister = async () => {
-  const { data: signUpData, error } = await supabase.auth.signUp({ email, password });
-    if (error) {
-      if (
-        error.message.includes("already registered") ||
-        error.status === 400
-      ) {
-        alert("Cet email est déjà enregistré.");
-      } else {
-        alert(error.message);
+      setErrorMessage("");
+
+      if (password !== confirmPassword) {
+        setErrorMessage("Les mots de passe ne correspondent pas.");
+        return;
       }
-    } else {
-  const userId = signUpData.user?.id;
-  
-  const { error: insertError } = await supabase
-      .from("profiles")
-      .insert([{ id: userId, email, username }]);
 
-    if (insertError) {
-      console.error("Erreur d'insertion dans la table 'profiles':", insertError);
-      alert("Inscription réussie, mais une erreur est survenue lors de l’enregistrement du profil.");
-      return;
+      const { data: signUpData, error } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+
+      if (error) {
+        if (
+          error.message.includes("already registered") ||
+          error.status === 400
+        ) {
+          setErrorMessage("Cet email est déjà enregistré.");
+        } else {
+          setErrorMessage(error.message);
+        }
+        return;
+      }
+
+      setConfirmation(true);
+      router.push("/login");
     };
-
-
-  dispatch(setUser({id: userId, email, username}));
-  setConfirmation(true);
-  router.push("/login");
-}
   };
 
   return (
     <div className="p-8 flex flex-col items-center justify-center mt-20 border-2 border-gray-200 rounded-lg shadow-md max-w-md mx-auto">
       <h1 className="text-2xl font-bold mb-4">Register</h1>
-      <div className="w-full mb-2">
-        <h2>User :</h2>
-        <input
-          className="w-full border p-2 mb-4 rounded"
-          placeholder="Username"
-          type="text"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-      </div>
       <div className="w-full mb-2">
         <h2>Email :</h2>
         <input
@@ -72,18 +63,34 @@ export default function Register() {
         <h2>Password :</h2>
         <input
           className="w-full border p-2 mb-4 rounded"
-          placeholder="Mot de passe"
+          placeholder="Password"
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
       </div>
+      <div className="w-full mb-4">
+        <label className="block text-sm font-medium mb-1">
+          Confirm password:
+        </label>
+        <input
+          className="w-full border p-2 rounded"
+          type="password"
+          placeholder="Repeat Password"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+        />
+      </div>
+      <div className="w-full mb-4">
+        {errorMessage ? <p className="text-red-600">{errorMessage}</p> : null}
+      </div>
       <div>
         {confirmation ? (
           <p className="text-green-600 mb-4">
-            Un email de confirmation a été envoyé. Veuillez vérifier votre boîte de réception.
+            Un email de confirmation a été envoyé. Veuillez vérifier votre boîte
+            de réception.
           </p>
-            ) : null }
+        ) : null}
       </div>
       <button
         onClick={handleRegister}
