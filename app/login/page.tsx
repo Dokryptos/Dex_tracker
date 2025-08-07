@@ -7,14 +7,30 @@ import { useRouter } from "next/navigation";
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
   const router = useRouter();
 
   const handleLogin = async () => {
+    setErrorMsg("");
+
+    if (!email || !password) {
+      setErrorMsg("Veuillez remplir tous les champs.");
+      return;
+    }
+
+    if (!email.includes("@")) {
+      setErrorMsg("Veuillez entrer un email valide.");
+      return;
+    }
+
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
-    if (error) return alert(error.message);
+    if (error) {
+      setErrorMsg("Connexion échouée : " + error.message);
+      return;
+    }
 
     router.push("/watchlist");
   };
@@ -42,7 +58,12 @@ export default function LoginPage() {
           onChange={(e) => setPassword(e.target.value)}
         />
       </div>
+      
+      {errorMsg && (
+        <p className="text-red-600 mb-4">{errorMsg}</p>
+      )}
       <button
+        disabled={!email || !password}
         onClick={handleLogin}
         className="w-full bg-black text-white p-2 rounded hover:bg-green-600"
       >
