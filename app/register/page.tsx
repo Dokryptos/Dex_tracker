@@ -10,43 +10,42 @@ export default function Register() {
   const dispatch = useAppDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmation, setConfirmation] = useState<boolean>(false);
+  const [username, setUsername] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [confirmation, setConfirmation] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const router = useRouter();
   const [errorMessage, setErrorMessage] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const handleRegister = async () => {
-    
-    setErrorMessage(""); 
+      setErrorMessage("");
 
-    if (password !== confirmPassword) {
-      setErrorMessage("Les mots de passe ne correspondent pas.");
-      return;
-    };
-
-  const {data, error } = await supabase.auth.signUp({ email, password });
-    if (error) {
-      if (
-        error.message.includes("already registered") ||
-        error.status === 400
-      ) {
-        alert("Cet email est déjà enregistré.");
-      } else {
-        alert(error.message);
+      if (password !== confirmPassword) {
+        setErrorMessage("Les mots de passe ne correspondent pas.");
+        return;
       }
-    } else {
-  const userId = data.user?.id;
 
-    dispatch(
-      setUser({
-        id: userId,
+      const { data: signUpData, error } = await supabase.auth.signUp({
         email,
-        username: email.split("@")[0],
-      })
-    );
-  setConfirmation(true);
-  router.push("/login");
-}
+        password,
+      });
+
+      if (error) {
+        if (
+          error.message.includes("already registered") ||
+          error.status === 400
+        ) {
+          setErrorMessage("Cet email est déjà enregistré.");
+        } else {
+          setErrorMessage(error.message);
+        }
+        return;
+      }
+
+      setConfirmation(true);
+      router.push("/login");
+    };
   };
 
   return (
@@ -66,33 +65,34 @@ export default function Register() {
         <h2>Password :</h2>
         <input
           className="w-full border p-2 mb-4 rounded"
-          placeholder="Mot de passe"
+          placeholder="Password"
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
       </div>
-      
       <div className="w-full mb-4">
-        <label className="block text-sm font-medium mb-1">Confirmez le mot de passe :</label>
+        <label className="block text-sm font-medium mb-1">
+          Confirm password:
+        </label>
         <input
           className="w-full border p-2 rounded"
           type="password"
-          placeholder="Répétez le mot de passe"
+          placeholder="Repeat Password"
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
         />
       </div>
-
-      {errorMessage && (
-        <p className="text-red-600  mb-4">{errorMessage}</p>
-      )}
+      <div className="w-full mb-4">
+        {errorMessage ? <p className="text-red-600">{errorMessage}</p> : null}
+      </div>
       <div>
         {confirmation ? (
           <p className="text-green-600 mb-4">
-            Un email de confirmation a été envoyé. Veuillez vérifier votre boîte de réception.
+            Un email de confirmation a été envoyé. Veuillez vérifier votre boîte
+            de réception.
           </p>
-            ) : null }
+        ) : null}
       </div>
       <button
         onClick={handleRegister}

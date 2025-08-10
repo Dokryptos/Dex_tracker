@@ -1,9 +1,9 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 import { UserState } from "./types";
 
 const initialState: UserState = {
   email: null,
-  id:null,
+  id: null,
   username: null,
   isLoggedIn: false,
 };
@@ -21,7 +21,7 @@ const profilesSlice = createSlice({
     },
     clearUser(state) {
       state.email = null;
-      state.id = null; 
+      state.id = null;
       state.username = null;
       state.isLoggedIn = false;
     },
